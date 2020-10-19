@@ -1,8 +1,8 @@
-# OpenHW Preliminary Project Proposal: LLVM compiler tool chain
+# OpenHW Preliminary Project Proposal: LLVM/Sail SW development tool chain for CORE-V
 
 ## Summary of project
 
-This proposal is for a baseline LLVM compiler tool chain for CORE-V comprising:
+This proposal is for a baseline development tool chain for CORE-V based on up-to-date compiler and simulation techology, comprising:
 
 - Clang/LLVM compiler for C and C++:
   - compiler
@@ -10,27 +10,28 @@ This proposal is for a baseline LLVM compiler tool chain for CORE-V comprising:
   - linker
   - emulation library (`compiler-rt`)
 
-The tool chain will rely (at least initially) on the following components of the GNU CORE-V tool chain:
+- Sail instruction set simulator with formal verification capabilities
 
-- GNU binutils
+The CORE-V LLVM tool chain may rely initially on the GNU CORE-V binutils developed as part of the GNU CORE-V tool chain:
 
-  - assembler
-  - linker
-  - low level utilities
+  - assembler (`gas`)
+  - linker (GNU `ld`)
+  - low level utilities for manipulating object files.
 
+The tool chain will interface to the following other components of the CORE-V development ecosystem
 - GNU debugger (GDB)
-- a standard C library
+- standard C libraries (`newlib`, GNU `_GlibC_`)
 - GNU C++ standard library (`libstdc++v3`)
 
-Because of the scale of the project and the current maturity level of LLVM for RISC-V in general, the work is composed of three phases:
+Because of the scale of the project and the current maturity level of LLVM for RISC-V in general, the work is decomposed into three phases:
 
 <!--- 0. resolution of known LLVM issues observed on the CVA6 verification flow;
   --->
-1. support for bare metal use of C with CVA6 (64-/32-bit) and CV32E40P (32-bit) together with the _Newlib_ C library;
-2. support for Linux application use of C and C++ with CVA6 (32-/64-bit) together with the _GlibC_ C library; and
-3. support for other RTOSes
+1. Support for bare metal use of C with CVA6 (64-/32-bit) and CV32E40P (32-bit) together with the _Newlib_ C library;
+2. Support for Linux application use of C and C++ with CVA6 (32-/64-bit) together with the _GlibC_ C library; and
+3. Support for other RTOSes.
 
-The proposal addresses just the first phase. Other phases will be the subject of separate proposals. Phase 1 will provide the following.
+The proposal addresses just the first phase. Other phases will be the subject of separate proposals. Phase 1 will provide the following:
 
 - suitability for HW verification of CVA6:
 
@@ -47,35 +48,34 @@ The proposal addresses just the first phase. Other phases will be the subject of
 
 - support for a generic CORE-V instruction set extension interface:
 
-  - this will provide a commercial driver for future tool chain development for these extensions.
+  - this will provide a commercial driver for future tool chain development for these extensions, whether public or proprietary.
 
 In order to support the Software TG's primary goal of developing a thriving commercial ecosystem, only a basic implementation will be provided.
 By basic implemention we mean that the assembler/linker will support the instructions, the compiler will have intrinsic/builtin function support and the compiler will have patterns to generate the instructions from C code in obvious circumstances.
 
-There will be no attempt to provide compiler optimization.  The development of optimizations will be under the responsibility of:
+There will be no attempt to provide compiler optimizations.  The development of optimizations will be under the responsibility of:
 
 - software companies which can will rely on the amount of work still needing to be done to drive their businesses; and of
-- HW and system integration companies which can use specific optimizations targeted at their products as market differentiators
+- HW and system integration companies which can use specific optimizations targeted at their products as market differentiators.
 
 In order to support the Software TG secondary goal of upstreaming all open source tool developments:
 
 - all development will be kept compliant with the LLVM coding and quality assurance standards;
-- the implemenation will follow the upstream tool design and coding  conventions; and
-- any vendor-specific modifications or additions will be duly isolated into extensions so as to maintain a fully functional common open source code base.
+- the implemenation will follow the upstream tool design and coding conventions; and
+- any vendor-specific modifications or additions will be duly isolated into extensions, so as to maintain a fully functional common open source code base.
 
 The finished work will be contributed to the LLVM community and maintained upstream.
 
 ### Nature of the development
 
-This project is a modification of a set of existing public open source code bases maintained as projects of the LLVM Foundation.  As such the processes used within OpenHW will reflect the processes of those upstream projects.
+This project requires the modification of a set of existing public open source code bases maintained as projects of the LLVM Foundation.  THerefore, the processes used within OpenHW will reflect the processes of those upstream projects.
 
-These code bases are very large:
+These code bases are of substantial size:
 
-- Clang: ??? MLOC
-- LLVM: ??? MLOC
-- lld: ??? MLOC
+- Clang: 1.75 MLOC
+- LLVM: 2.1 MLOC
 
-The code bases include substantial regression test suites, and success with these test suites is a pre-requisite of upstream acceptance of any patch. **Add LLVM/Clang test suite info**
+The code bases include substantial regression test suites (1.5 MLOC including `libcxx` C++ library tests), and success with these test suites is a pre-requisite of upstream acceptance of any patch.
 
 Until CORE-V is accepted upstream, code will be developed in narrow mirrors of upstream repositories, featuring a single branch based on upstream top of tree.  This will be used as the basis of the patches to be submitted for upstreaming.
 
@@ -91,17 +91,15 @@ Once CORE-V is accepted upstream, code will be developed exclusively in upstream
 
 - Project Launch (PL): end November 2020
 - First release (CVA6 64/32 bits, HW verification equivalence to GCC): end 2020
-- Upstreaming of first release: ???
+- Upstreaming of first release: 2021 H1
 
-  - patch must be submitted by ???
-  - requires cooperation from RISC-V LLVM maintainers
-  - otherwise will be delayed to ???.
+The schedule of LLVM releases follows a six-month cycle which additionally depends on the progress of on-going releases.  This makes the scheduling of upstream contributions more flexible (and more difficult to schedule upfront).
 
 - Subsequent releases to support further instruction set extensions will be timed according to available resources.
 
 ## OpenHW members/participants committed to participate in this project
 
-All OpenHW group members are invited to contributed expertise to this project. At present we are aware of:
+All OpenHW group members are invited to contributed expertise to this project. At present we are aware of the interest and commitment of:
 
 1. Thales
 2. Embecosm
@@ -133,19 +131,20 @@ The following project documents will be created:
 It is proposed that the OpenHW Group Hardware TG acts as a "virtual customer" to exercise the compiler as it is developed.  In particular:
 
 - the CVA6 project will exercise the multi-XLEN and core functionality of the compiler in the CVA6 verification flow;
-- the CV32E40P project will exercise the support of CV32E40P-specific extensions.
+- the CV32E40P project may exercise the support of CV32E40P-specific extensions.
 
 In addition, while the tool chain will have been thoroughly tested, it will benefit from the OpenHW Group Hardware TG being able to use it with their reference applications.
 
 ## Summary of requirements
 
-The requirements are captured in the [OpenHW Group CV32E40P User Manual](https://core-v-docs-verif-strat.readthedocs.io/projects/cv32e40p_um/en/latest/).
+The requirements for the CVA6 platform are captured in ...
+The requirements for the CV32E40P platoform are captured in the [OpenHW Group CV32E40P User Manual](https://core-v-docs-verif-strat.readthedocs.io/projects/cv32e40p_um/en/latest/).
 
 ## Explanation of why OpenHW should do this project
 
-A processor is only useful with a robust, up-to-date, proven compiler tool chain.  CORE-V, being a strict RISC-V derivative can use a standard RISC-V compiler tool chain, but in these circumstances will not be able to take advantage of any of the extended ISA features of the CORE-V processors.
+A processor is only useful with a robust, up-to-date, proven compiler tool chain.  CORE-V, being a strict RISC-V derivative can use a standard RISC-V compiler tool chain, but in these circumstances will not be able to take advantage of any of the extended ISA features of the CORE-V processors.  This project will provide a baseline tool chain allowing these extensions to be used, albeit without optimization, from the CORE-V tool chain.
 
-This project will provide a baseline tool chain allowing these extensions to be used, albeit without optimization, from the CORE-V tool chain.
+Furthermore, the licensing scheme of LLVM (Apache license) makes it particularly appealing to industrial players.  Because it does not require the disclosure of compiler source code, chip manufacturers and system integrators can better protect their differentiating Intellectual Property assets.  This licensing scheme also creates additional opportunities for software companies which can provide high added-value services in the area of compiler tuning for hardware/system-centric companies.
 
 ## Industry landscape
 
@@ -153,18 +152,15 @@ The "original" compiler used for the development of RISC-V cores is the GCC.  Ho
 
 ### Related efforts to be described
 
-The upstream GNU tool chain projects already support standard RISC-V.  It is reasonably standard, but relatively immature by comparison with competing tool chains such as Arm and MIPS.
+The upstream LLVM tool chain projects already support standard RISC-V.  RISC-V support in LLVM is strongly compliant to the RISC-V specification, but relatively immature in comparison to other architectures as x86, Arm and MIPS.
 
-The PULP GNU tool chain is based on GCC from 2017, shortly after RISC-V was
-added upstream.  It lacks all the more recent work on RISC-V optimization
-work.  It is a research compiler, and does not always follow GNU design principles or coding standards.  It does not include any PULP specific tests
+Currently LLVM does not support CORE-V specific features or extensions, and subsequently, its test suites do not include any CORE-V or PULP specific tests.
 
-There are also other non-GNU tool chains for RISC-V
-
-- Clang/LLVM for RISC-V
+Other toolchains available for RISC-V are:
+- the GNU tool chain for RISC-V, for which a CORE-V specific project is being set up within OpenHW Group;
 - IAR RISC-V compiler
 
-None of these yet supports PULP or CORE-V.
+The GNU tool chain project within OpenHW Group intends to support CORE-V and PULP extensions, but at the time of writing focuses solely on the CV32E40P platform.
 
 ## External dependencies
 
@@ -182,7 +178,7 @@ External dependencies
 
 ### Final deliverables
 
-1. extensions to upstream GNU compiler tools to support CORE-V; and
+1. extensions to upstream LLVM compiler tools to support CORE-V; and
 2. revisions to the CORE-V design specifications to clarify ambiguities.
 
 ### Interim deliverables
@@ -196,7 +192,7 @@ External dependencies
 
 ## TGs impacted/resource requirements
 
-The software TG will be responsible for oversight of the planning and delivery of this project.
+The Software TG will be responsible for oversight of the planning and delivery of this project.
 
 ## OpenHW engineering staff resource plan: requirement and availability
 
@@ -204,14 +200,9 @@ The software TG will be responsible for oversight of the planning and delivery o
 
 ## Engineering resource supplied by members - requirement and availability
 
-Previous work by Craig Blackmore of Embecosm has estimated the effort to be 15
-engineer months work *for experienced GNU tool chain engineers*.  This is to
-achieve a tested functional tool chain *without* optimization.
+TBD
 
-- Embecosm has already contributed around 3 engineer months to CORE-V GNU compiler tool chain development, and is willing to contribute another 3 engineer months during 2020 and early 2021.
-- a further 9 engineer months is needed to complete the project
-
-*Note:* This is effort by GNU compiler tool chain specialist engineers.
+*Note:* This is effort by experienced LLVM compiler tool chain specialist engineers.
 
 ## OpenHW marketing resource - requirement and availability
 
@@ -227,11 +218,11 @@ achieve a tested functional tool chain *without* optimization.
 
 ## Funding supplied by members - requirement and availability
 
-- An alternative to support in kind is funding of effort by Embecosm.
+- An alternative to support in kind is funding of effort by Thales and Embecosm.
 
 ## Architecture diagram
 
-The standard GNU tool chain components are shown in the following diagram.
+The standard LLVM tool chain components are shown in the following diagram.
 
 ![](images/gnu-tools.png)
 
