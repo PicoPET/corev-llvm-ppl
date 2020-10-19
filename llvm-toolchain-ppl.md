@@ -10,7 +10,7 @@ This proposal is for a baseline development tool chain for CORE-V based on up-to
   - linker
   - emulation library (`compiler-rt`)
 
-- [RISC-V model for Sail](https://github.com/rems-project/sail-riscv), an instruction set simulator with formal verification capabilities
+- CORE-V support in the [RISC-V model for Sail](https://github.com/rems-project/sail-riscv), an instruction set simulator with formal verification capabilities
 
 The CORE-V LLVM tool chain may rely initially on the GNU CORE-V binutils developed as part of the GNU CORE-V tool chain:
 
