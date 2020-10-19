@@ -4,13 +4,13 @@
 
 This proposal is for a baseline development tool chain for CORE-V based on up-to-date compiler and simulation techology, comprising:
 
-- Clang/LLVM compiler for C and C++:
+- Clang/LLVM tool chain for C and C++:
   - compiler
   - assembler
   - linker
   - emulation library (`compiler-rt`)
 
-- Sail instruction set simulator with formal verification capabilities
+- [RISC-V model for Sail](https://github.com/rems-project/sail-riscv), an instruction set simulator with formal verification capabilities
 
 The CORE-V LLVM tool chain may rely initially on the GNU CORE-V binutils developed as part of the GNU CORE-V tool chain:
 
@@ -23,7 +23,11 @@ The tool chain will interface to the following other components of the CORE-V de
 - standard C libraries (`newlib`, GNU `_GlibC_`)
 - GNU C++ standard library (`libstdc++v3`)
 
-Because of the scale of the project and the current maturity level of LLVM for RISC-V in general, the work is decomposed into three phases:
+[Sail](https://github.com/rems-project/sail) is an instruction set simulator written in OCaml.
+Thanks to the strictly defined semantics of OCaml it is possible to apply formal verification to processors models described in that language.
+Since a preliminary RISC-V model for Sail already exists, the aim is to provide a model of the CVA6 core which will capture the behavior of all operation modes and programmer-visible elements of the core (e.g., all CVA6-specific CSRs).
+
+Because of the scale of the project and the current maturity level of LLVM for RISC-V in general, the LLVM-related work is decomposed into three phases:
 
 <!--- 0. resolution of known LLVM issues observed on the CVA6 verification flow;
   --->
@@ -33,12 +37,22 @@ Because of the scale of the project and the current maturity level of LLVM for R
 
 The proposal addresses just the first phase. Other phases will be the subject of separate proposals. Phase 1 will provide the following:
 
-- suitability for HW verification of CVA6:
+- suitability of Clang/LLVM for HW verification of CVA6:
 
   - seamless support of multiple datapath widths (multi-XLEN support)
   - resolution of functional failures identified on the current CVA6 verification flow
 
-- support for the following CORE-V instruction set extensions:
+- support of differentiating characteristics of the CVA6 cores:
+  - pipeline depth
+  - specific CSRs
+
+- support for a generic CORE-V instruction set extension interface:
+
+  - in the Clang/LLVM tool chain
+  - in the Sail simulator
+  - NOTE: this will provide a commercial driver for future tool chain development for new extensions, whether public or proprietary.
+
+- if possible (given the resources and time available), LLVM compiler chain and Sail simulator support for selected CORE-V instruction set extensions among:
 
   - hardware loop;
   - multiply-accumulate;
@@ -46,21 +60,22 @@ The proposal addresses just the first phase. Other phases will be the subject of
   - direct branches; and
   - general ALU operations.
 
-- support for a generic CORE-V instruction set extension interface:
-
-  - this will provide a commercial driver for future tool chain development for these extensions, whether public or proprietary.
-
 In order to support the Software TG's primary goal of developing a thriving commercial ecosystem, only a basic implementation will be provided.
-By basic implemention we mean that the assembler/linker will support the instructions, the compiler will have intrinsic/builtin function support and the compiler will have patterns to generate the instructions from C code in obvious circumstances.
+By basic implementation we mean that:
+
+- the assembler/linker will support the instructions;
+- the compiler will have intrinsic/builtin function support;
+- the compiler will have patterns to generate the instructions from C code in obvious circumstances.
 
 There will be no attempt to provide compiler optimizations.  The development of optimizations will be under the responsibility of:
 
-- software companies which can will rely on the amount of work still needing to be done to drive their businesses; and of
+- software companies which can rely on the amount of work still needing to be done to drive their businesses; and of
 - HW and system integration companies which can use specific optimizations targeted at their products as market differentiators.
 
 In order to support the Software TG secondary goal of upstreaming all open source tool developments:
 
-- all development will be kept compliant with the LLVM coding and quality assurance standards;
+- all Clang/LLVM development will be kept compliant with the LLVM Foundation coding and quality assurance standards;
+- all Sail development will be aligned on REMS project standards/practices;
 - the implemenation will follow the upstream tool design and coding conventions; and
 - any vendor-specific modifications or additions will be duly isolated into extensions, so as to maintain a fully functional common open source code base.
 
@@ -68,12 +83,12 @@ The finished work will be contributed to the LLVM community and maintained upstr
 
 ### Nature of the development
 
-This project requires the modification of a set of existing public open source code bases maintained as projects of the LLVM Foundation.  THerefore, the processes used within OpenHW will reflect the processes of those upstream projects.
+This project requires the modification of a set of existing public open source code bases maintained as projects of the LLVM Foundation.  Therefore, the processes used within OpenHW will reflect the processes of those upstream projects.
 
 These code bases are of substantial size:
 
-- Clang: 1.75 MLOC
-- LLVM: 2.1 MLOC
+- Clang: 1.75 MLOC C++
+- LLVM: 2.1 MLOC C++
 
 The code bases include substantial regression test suites (1.5 MLOC including `libcxx` C++ library tests), and success with these test suites is a pre-requisite of upstream acceptance of any patch.
 
@@ -81,7 +96,7 @@ Until CORE-V is accepted upstream, code will be developed in narrow mirrors of u
 
 <!--- Partners may maintain local backport branches for corrections to official releases used in their internal HW development flows. --->
 
-Once CORE-V is accepted upstream, code will be developed exclusively in upstream `llvm.org` repositories and the narrow mirrors will be removed.
+Once CORE-V is accepted upstream, common CORE-V specific code for LLVM will be developed and maintained in upstream `llvm.org` repositories.  However, dedicated extensions may continue to be developed in member-specific repositories.
 
 ### Summary timeline
 
@@ -91,7 +106,7 @@ Once CORE-V is accepted upstream, code will be developed exclusively in upstream
 
 - Project Launch (PL): end November 2020
 - First release (CVA6 64/32 bits, HW verification equivalence to GCC): end 2020
-- Upstreaming of first release: 2021 H1
+- Upstreaming of first release: 2021 H1, targeting LLVM 13.0.
 
 The schedule of LLVM releases follows a six-month cycle which additionally depends on the progress of on-going releases.  This makes the scheduling of upstream contributions more flexible (and more difficult to schedule upfront).
 
@@ -99,7 +114,7 @@ The schedule of LLVM releases follows a six-month cycle which additionally depen
 
 ## OpenHW members/participants committed to participate in this project
 
-All OpenHW group members are invited to contributed expertise to this project. At present we are aware of the interest and commitment of:
+All OpenHW Group members are invited to contributed expertise to this project. At present we are aware of the interest and commitment of:
 
 1. Thales
 2. Embecosm
@@ -138,7 +153,7 @@ In addition, while the tool chain will have been thoroughly tested, it will bene
 ## Summary of requirements
 
 The requirements for the CVA6 platform are captured in ...
-The requirements for the CV32E40P platoform are captured in the [OpenHW Group CV32E40P User Manual](https://core-v-docs-verif-strat.readthedocs.io/projects/cv32e40p_um/en/latest/).
+The requirements for the CV32E40P platform are captured in the [OpenHW Group CV32E40P User Manual](https://core-v-docs-verif-strat.readthedocs.io/projects/cv32e40p_um/en/latest/).
 
 ## Explanation of why OpenHW should do this project
 
@@ -148,13 +163,13 @@ Furthermore, the licensing scheme of LLVM (Apache license) makes it particularly
 
 ## Industry landscape
 
-The "original" compiler used for the development of RISC-V cores is the GCC.  However, LLVM offers a licensing scheme that is more appealing to the processor industry as it does not require the disclosure of critical vendor-specific intellectual property (IP) when distributing the software.  LLVM-based compiler chains appear to be at the foundation of many market leader offerings and it is expected that this will also be the case for RISC-V / CORE-V solutions.
+The "original" compiler used for the development of RISC-V cores is GCC.  However, LLVM offers a licensing scheme that is more appealing to the processor industry as it does not require the disclosure of critical vendor-specific intellectual property (IP) when distributing the software.  LLVM-based compiler chains appear to be at the foundation of many market leader offerings and it is expected that this will also be the case for RISC-V / CORE-V solutions.
 
 ### Related efforts to be described
 
 The upstream LLVM tool chain projects already support standard RISC-V.  RISC-V support in LLVM is strongly compliant to the RISC-V specification, but relatively immature in comparison to other architectures as x86, Arm and MIPS.
 
-Currently LLVM does not support CORE-V specific features or extensions, and subsequently, its test suites do not include any CORE-V or PULP specific tests.
+Currently LLVM does not support CORE-V specific features or extensions, and subsequently, its test suites do not include any CORE-V or PULP-specific tests.
 
 Other toolchains available for RISC-V are:
 - the GNU tool chain for RISC-V, for which a CORE-V specific project is being set up within OpenHW Group;
@@ -256,9 +271,7 @@ Risk is scored as likelihood (1-10) x impact (1-3) with mitigation required for 
 
 | Risk                          |   L |   I |   R | Mitigation                 |
 |:----------------------------- | ---:| ---:| ---:|:---------------------------|
-| Isufficient resource available | 5 | 3 | 15 | Socialize around OpenHW members to find expertise or funding. |
-| Ownership of software for upstreaming | 5 | 2 | 10 | Ensure OpenHW group has FSF approval, discuss transfer of ownership with Luca Benini, clean room rewrite as last resort. |
-| No process for allocating new relocations | 5 | 2 | 10 | Propose new process to RISC-V International psABI group, suggest allocation is coincident with upstreaming. |
+| Insufficient resource available | 5 | 3 | 15 | Socialize around OpenHW members to find expertise or funding. |
 
 ## Preliminary project plan
 
