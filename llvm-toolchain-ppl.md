@@ -31,7 +31,7 @@ Because of the scale of the project and the current maturity level of LLVM for R
 
 <!--- 0. resolution of known LLVM issues observed on the CVA6 verification flow;
   --->
-1. Support for bare metal use of C with CVA6 (64-/32-bit) and CV32E40P (32-bit) together with the _Newlib_ C library;
+1. Support for bare metal use of C with CVA6 (64-/32-bit) together with the _Newlib_ C library;
 2. Support for Linux application use of C and C++ with CVA6 (32-/64-bit) together with the _GlibC_ C library; and
 3. Support for other RTOSes.
 
@@ -143,17 +143,13 @@ The following project documents will be created:
 
 ## Virtual customer
 
-It is proposed that the OpenHW Group Hardware TG acts as a "virtual customer" to exercise the compiler as it is developed.  In particular:
-
-- the CVA6 project will exercise the multi-XLEN and core functionality of the compiler in the CVA6 verification flow;
-- the CV32E40P project may exercise the support of CV32E40P-specific extensions.
+It is proposed that the OpenHW Group Hardware TG acts as a "virtual customer" to exercise the compiler as it is developed.  In particular, the CVA6 project will exercise the multi-XLEN and core functionality of the compiler in the CVA6 verification flow.
 
 In addition, while the tool chain will have been thoroughly tested, it will benefit from the OpenHW Group Hardware TG being able to use it with their reference applications.
 
 ## Summary of requirements
 
 The requirements for the CVA6 platform are captured in ...
-The requirements for the CV32E40P platform are captured in the [OpenHW Group CV32E40P User Manual](https://core-v-docs-verif-strat.readthedocs.io/projects/cv32e40p_um/en/latest/).
 
 ## Explanation of why OpenHW should do this project
 
