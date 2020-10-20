@@ -38,7 +38,6 @@ Because of the scale of the project and the current maturity level of LLVM for R
 The proposal addresses just the first phase. Other phases will be the subject of separate proposals. Phase 1 will provide the following:
 
 - suitability of Clang/LLVM for HW verification of CVA6:
-
   - seamless support of multiple datapath widths (multi-XLEN support)
   - resolution of functional failures identified on the current CVA6 verification flow
 
@@ -47,18 +46,9 @@ The proposal addresses just the first phase. Other phases will be the subject of
   - specific CSRs
 
 - support for a generic CORE-V instruction set extension interface:
-
   - in the Clang/LLVM tool chain
   - in the Sail simulator
   - NOTE: this will provide a commercial driver for future tool chain development for new extensions, whether public or proprietary.
-
-- if possible (given the resources and time available), LLVM compiler chain and Sail simulator support for selected CORE-V instruction set extensions among:
-
-  - hardware loop;
-  - multiply-accumulate;
-  - post-increment and register-indexed load/store;
-  - direct branches; and
-  - general ALU operations.
 
 In order to support the Software TG's primary goal of developing a thriving commercial ecosystem, only a basic implementation will be provided.
 By basic implementation we mean that:
