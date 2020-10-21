@@ -10,7 +10,7 @@ This proposal is for a baseline development tool chain for CORE-V based on up-to
   - linker
   - emulation library (`compiler-rt`)
 
-- CORE-V support in the [RISC-V model for Sail](https://github.com/rems-project/sail-riscv), an instruction set simulator with formal verification capabilities
+- CORE-V support in the [RISC-V model](https://github.com/rems-project/sail-riscv) for [Sail](https://github.com/rems-project/sail), an instruction set simulator with formal verification capabilities.
 
 The CORE-V LLVM tool chain may rely initially on the GNU CORE-V binutils developed as part of the GNU CORE-V tool chain:
   - assembler (`gas`)
@@ -22,11 +22,10 @@ The tool chain will interface to the following other components of the CORE-V de
 - standard C libraries (`newlib`, GNU `_GlibC_`)
 - GNU C++ standard library (`libstdc++v3`)
 
-NOTE: Provision of non-(L)GPL libraries is beyond the scope of this project.
+NOTE: Provision of non-(L)GPL C/C++ libraries is beyond the scope of this project.
 
-[Sail](https://github.com/rems-project/sail) is an instruction set simulator written in OCaml.
-Thanks to the strictly defined semantics of OCaml it is possible to apply formal verification to processors models described in that language.
-Since a preliminary RISC-V model for Sail already exists, the aim is to provide a model of the CVA6 core which will capture the behavior of all operation modes and programmer-visible elements of the core (e.g., all CVA6-specific CSRs).
+Sail is an instruction set simulator written in OCaml. Thanks to the strictly defined semantics of OCaml it is possible to apply formal verification to processors models described in that language.
+Since a preliminary RISC-V model for Sail already exists, the aim is to provide a model of the CVA6 core which will capture the behavior of all operation modes and programmer-visible elements of the core (e.g., all CVA6-specific CSRs).  Furthermore, the project will identify (or define) a generic interface for adding new ISA extensions to Sail RISC-V models in order to support vendor-specific extension modeling and verification.
 
 Because of the scale of the project and the current maturity level of LLVM for RISC-V in general, the LLVM-related work is decomposed into three phases:
 
@@ -37,8 +36,8 @@ Because of the scale of the project and the current maturity level of LLVM for R
 The proposal addresses just the first phase. Other phases will be the subject of separate proposals. Phase 1 will provide the following:
 
 - suitability of Clang/LLVM for HW verification of CVA6:
-  - seamless support of multiple datapath widths (multi-XLEN support)
-  - resolution of functional failures identified on the current CVA6 verification flow
+  - seamless support of multiple datapath widths (multi-XLEN support);
+  - resolution of functional failures identified on the current CVA6 verification flow.
 
 - support of differentiating characteristics of the CVA6 cores:
   - pipeline depth,
@@ -82,7 +81,7 @@ Until CORE-V related contributions are accepted upstream, code will be developed
 
 <!--- Partners may maintain local backport branches for corrections to official releases used in their internal HW development flows. --->
 
-Once CORE-V contributions are accepted upstream, common CORE-V specific code for LLVM will be developed and maintained in upstream `llvm.org` repositories.  However, dedicated extensions may continue to be developed in member-specific repositories.  Similarly, common CORE-V related code for Sail will be developed and maintained in the upstream repositories.
+Once CORE-V contributions are accepted upstream, common CORE-V specific code for LLVM will be developed and maintained in upstream `llvm.org` repositories.  However, dedicated extensions may continue to be developed in member-owned repositories tracking the upstream repository.  Similarly, common CORE-V related code for Sail will be developed and maintained in the upstream repositories, with dedicated extensions maintained in member-owned repositories.
 
 ### Summary timeline
 
@@ -110,7 +109,6 @@ This is a much lighter role than a traditional project manager, since the requir
  tracking and reporting status to OpenHW Software TG and Technical WG;
 - identifying and resolving issues related to the outcome.
 
-
 ## Project documents
 
 The following project documents will be created:
@@ -132,7 +130,7 @@ In addition, while the tool chain will have been thoroughly tested, it will bene
 
 ## Summary of requirements
 
-The requirements for the CVA6 platform are captured in ...
+The requirements for the CVA6 platform are captured in (link TBD).
 
 ## Explanation of why OpenHW should do this project
 
